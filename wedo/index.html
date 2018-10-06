@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>We Do</title>
+	<link rel="stylesheet" href="style.css" type="text/css"/>
+</head>
+
+<body>
+
+	<h1 id="title">We Do</h1>
+
+	<video src="https://www.cs.tufts.edu/comp/20/wedo.mp4" id="wedo" controls></video>
+	<div id="lyrics"></div>
+
+	<script>
+		var song = document.getElementById("wedo");
+		var words = document.getElementById("lyrics");
+		song.addEventListener("timeupdate", function() {
+			if (song.currentTime > 4 && song.currentTime < 6.5) {
+				words.innerHTML = "<h3>Who controls the British crown?</h3>";
+			}
+			else if (song.currentTime > 6.5 && song.currentTime < 8.5) {
+				words.innerHTML = "<h3>Who keeps the metric system down?</h3>";
+			}
+			else if (song.currentTime > 8.5 && song.currentTime < 10.5) {
+				words.innerHTML = "<h3>We do!</h3>";
+			}
+			else if (song.currentTime > 10.5 && song.currentTime < 12) {
+				words.innerHTML = "<h2>We do!</h2>";
+			}
+			else if (song.currentTime > 12.5 && song.currentTime < 14.5) {
+				words.innerHTML = "<h3>Who keeps Atlantis off the maps?</h3>";
+			}
+			else if (song.currentTime > 14.5 && song.currentTime < 17.2) {
+				words.innerHTML = "<h3>Who keeps the Martians under wraps?</h3>";
+			}
+			else if (song.currentTime >  17.2 && song.currentTime < 18.5) {
+				words.innerHTML = "<h3>We do!</h3>";
+			}
+			else if (song.currentTime > 18.5 && song.currentTime < 21) {
+				words.innerHTML = "<h2>We do!</h2>";
+			}
+			else if (song.currentTime > 21 && song.currentTime < 25) {
+				words.innerHTML = "<h3>Who holds back the electric car?</h3>";
+			}
+			else if (song.currentTime > 25 && song.currentTime < 28) {
+				words.innerHTML = "<h3>Who makes Steve Guttenberg</h3>";
+			}
+			else if (song.currentTime > 28 && song.currentTime < 28.5) {
+				words.innerHTML = "<h3>A</h3>";
+			}
+			else if (song.currentTime > 28.5 && song.currentTime < 29.5) {
+				words.innerHTML = '<p><img src="star.gif" alt = sparkling star gif" /></p>';
+			}
+			else if (song.currentTime > 29.5 && song.currentTime < 32) {
+				words.innerHTML = "<h3>We do!</h3>";
+			}
+			else if (song.currentTime > 32 && song.currentTime < 33.7) {
+				words.innerHTML = "<h2>We do!</h2>";
+			}
+			else if (song.currentTime > 33.7 && song.currentTime < 36) {
+				words.innerHTML = "<h3>Who robs cavefish of their sight?</h3>";
+			}
+			else if (song.currentTime > 36 && song.currentTime < 38) {
+				words.innerHTML = "<h3>Who rigs every Oscar night?</h3>";
+			}
+			else if (song.currentTime > 38 && song.currentTime < 41) {
+				words.innerHTML = "<h3>We do!</h3>";
+			}
+			else if (song.currentTime > 41 && song.currentTime < 42.3) {
+				words.innerHTML = "<h2>We</h2>";
+			}
+			else if (song.currentTime > 42.3) {
+				words.innerHTML = "<h1>DO!</h1>";
+			}
+		}, false);
+	</script>
+
+</body>
+</html>
