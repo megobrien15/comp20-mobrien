@@ -180,11 +180,31 @@ function haversineDistance(myLatLng, stationLatLng, isMiles) {
 function getSchedule(stationNumber, trainMarker) {
 	stationID = stations[stationNumber].id;
 	var stationInfoWindow;
-	request = new XMLHttpRequest();
+	
+	var request = new XMLHttpRequest();
+	
 	request.open("GET", "https://chicken-of-the-sea.herokuapp.com/redline/schedule.json?stop_id=" + stationID, true);
+
 	request.onreadystatechange = function() {
-		stations[stationNumber].schedule = JSON.parse(request.responseText);
+		if (this.readyState == 4 && this.status == 200) {
+			var parsed = JSON.parse(request.responseText);
+			var direction;
+			for (i = 0; i < 10; i++) {
+				console.log(i);
+				if (parsed.data[i].attributes.direction_id == 1) {
+					direction = "Alewife";
+				}
+				else {
+					direction = "Ashmont/Braintree";
+				}
+				console.log(i);
+				stations[stationNumber].schedule += direction + " train arriving at: " + parsed.data[i].attributes.arrival_time + 
+												" and departing at " + parsed.data[i].attributes.departure_time + ";" + '\n';
+			}
+		}
 	}
+	request.send();
+
 	stationInfoWindow = new google.maps.InfoWindow();
 	google.maps.event.addListener(trainMarker, 'click', function() {
 		stationInfoWindow.setContent(stations[stationNumber].schedule);
