@@ -52,16 +52,16 @@ function initMap() {
 
 	lat = stations[0].lat;
 	lng = stations[0].lng;
+
 	me = new google.maps.LatLng(lat, lng);
 
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: lat, lng: lng}, zoom: 15
 	});
-	getLocation();
-}
 
-/* the following two functions written with help from the example 
-   geolocation_map.html in the comp20 github repo */
+	getLocation();
+	renderMap();
+}
 
 function getLocation() {
 	if (navigator.geolocation) {
@@ -69,7 +69,7 @@ function getLocation() {
 			lat = position.coords.latitude;
 			lng = position.coords.longitude;
 			centerMap();
-			renderMap();
+			addLocMarker();
 		});
 	}
 	else {
@@ -82,31 +82,51 @@ function centerMap() {
 	me = new google.maps.LatLng(lat, lng);
 	map.panTo(me);
 }
-function renderMap() {
+
+function addLocMarker() {
 
 	var closestStation = getClosestStation(lat, lng);
 
-	addMarkers(closestStation);
-
-	addLines(closestStation);
-	
-}
-
-function addMarkers(closestStation) {
-
 	var myMarker;
 	var myMarkerImage = 'you_are_here_star.png';
-	var trainMarker;
-	var trainMarkerImage = 'station.png';
-	var infoWindow;
 
-	//add current location marker
 	myMarker = new google.maps.Marker({
 		position: me,
 		map: map,
 		title: "You are here!",
 		icon: myMarkerImage
 	});
+
+	infoWindow = new google.maps.InfoWindow();
+	google.maps.event.addListener(myMarker, 'click', function() {
+		infoWindow.setContent("Closest Red Line Station: " + stations[closestStation.station].name + 
+				"; \n Distance away: " + closestStation.distance + " miles.");
+		infoWindow.open(map, myMarker);
+	});
+	
+	var closestPath = new google.maps.Polyline({
+		path: [{lat: lat, lng: lng}, {lat: stations[closestStation.station].lat, lng: stations[closestStation.station].lng}],
+		map: map,
+		geodesic: true,
+		strokeColor: '#340499',
+		strokeOpacity: 1.0,
+		strokeWeight: 4
+	});
+}
+
+function renderMap() {
+
+	addMarkers();
+
+	addLines();
+	
+}
+
+function addMarkers() {
+
+	var trainMarker;
+	var trainMarkerImage = 'station.png';
+	var infoWindow;
 
 	//add marker at every station
 	for (i = 0; i < stations.length; i++) {
@@ -120,13 +140,6 @@ function addMarkers(closestStation) {
 		getSchedule(i, trainMarker);
 	}
 
-	//add infowindow for current location marker
-	infoWindow = new google.maps.InfoWindow();
-	google.maps.event.addListener(myMarker, 'click', function() {
-		infoWindow.setContent("Closest Red Line Station: " + stations[closestStation.station].name + 
-				"; \n Distance away: " + closestStation.distance + " miles.");
-		infoWindow.open(map, myMarker);
-	});
 }
 function addLines(closestStation) {
 
@@ -144,15 +157,6 @@ function addLines(closestStation) {
 		map: map,
 		geodesic: true,
 		strokeColor: '#FF0000',
-		strokeOpacity: 1.0,
-		strokeWeight: 4
-	});
-
-	var closestPath = new google.maps.Polyline({
-		path: [{lat: lat, lng: lng}, {lat: stations[closestStation.station].lat, lng: stations[closestStation.station].lng}],
-		map: map,
-		geodesic: true,
-		strokeColor: '#340499',
 		strokeOpacity: 1.0,
 		strokeWeight: 4
 	});
