@@ -50,8 +50,12 @@ var braintreeLine = [{lat: stations[4].lat, lng: stations[4].lng},
 
 function initMap() {
 
+	lat = stations[0].lat;
+	lng = stations[0].lng;
+	me = new google.maps.LatLng(lat, lng);
+
 	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: stations[0].lat, lng: stations[0].lng}, zoom: 20
+		center: {lat: lat, lng: lng}, zoom: 15
 	});
 	getLocation();
 }
@@ -64,6 +68,7 @@ function getLocation() {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			lat = position.coords.latitude;
 			lng = position.coords.longitude;
+			centerMap();
 			renderMap();
 		});
 	}
@@ -72,25 +77,38 @@ function getLocation() {
 	}
 }
 
+function centerMap() {
+
+	me = new google.maps.LatLng(lat, lng);
+	map.panTo(me);
+}
 function renderMap() {
-	var infoWindow;
+
+	var closestStation = getClosestStation(lat, lng);
+
+	addMarkers(closestStation);
+
+	addLines(closestStation);
+	
+}
+
+function addMarkers(closestStation) {
+
 	var myMarker;
 	var myMarkerImage = 'you_are_here_star.png';
 	var trainMarker;
 	var trainMarkerImage = 'station.png';
+	var infoWindow;
 
-	me = new google.maps.LatLng(lat, lng);
-	map.panTo(me);
-
-	var closestStation = getClosestStation(lat, lng);
-
-	marker = new google.maps.Marker({
+	//add current location marker
+	myMarker = new google.maps.Marker({
 		position: me,
 		map: map,
 		title: "You are here!",
 		icon: myMarkerImage
 	});
 
+	//add marker at every station
 	for (i = 0; i < stations.length; i++) {
 		trainMarker = new google.maps.Marker({
 			position: {lat: stations[i].lat, lng: stations[i].lng},
@@ -98,15 +116,19 @@ function renderMap() {
 			title: stations[i].name,
 			icon: trainMarkerImage
 		});
+		//for each station marker, get schedule and create infowindow
 		getSchedule(i, trainMarker);
-	}	
+	}
 
+	//add infowindow for current location marker
 	infoWindow = new google.maps.InfoWindow();
-	google.maps.event.addListener(marker, 'click', function() {
+	google.maps.event.addListener(myMarker, 'click', function() {
 		infoWindow.setContent("Closest Red Line Station: " + stations[closestStation.station].name + 
 				"; \n Distance away: " + closestStation.distance + " miles.");
-		infoWindow.open(map, marker);
+		infoWindow.open(map, myMarker);
 	});
+}
+function addLines(closestStation) {
 
 	var ashmontPolyline = new google.maps.Polyline({
 		path: ashmontLine,
@@ -133,7 +155,7 @@ function renderMap() {
 		strokeColor: '#340499',
 		strokeOpacity: 1.0,
 		strokeWeight: 4
-	});	
+	});
 }
 
 function getClosestStation(myLat, myLng) {
@@ -177,7 +199,9 @@ function haversineDistance(myLatLng, stationLatLng, isMiles) {
 	}
 	return d;
 }
+
 function getSchedule(stationNumber, trainMarker) {
+
 	stationID = stations[stationNumber].id;
 	var stationInfoWindow;
 	
@@ -190,14 +214,12 @@ function getSchedule(stationNumber, trainMarker) {
 			var parsed = JSON.parse(request.responseText);
 			var direction;
 			for (i = 0; i < parsed.data.length; i++) {
-				console.log(i);
 				if (parsed.data[i].attributes.direction_id == 1) {
 					direction = "Alewife";
 				}
 				else {
 					direction = "Ashmont/Braintree";
 				}
-				console.log(i);
 				stations[stationNumber].schedule += "<p>" + direction + " train arriving at: " + parsed.data[i].attributes.arrival_time + 
 												" and departing at " + parsed.data[i].attributes.departure_time + ";" + "</p>";
 			}
@@ -205,6 +227,7 @@ function getSchedule(stationNumber, trainMarker) {
 	}
 	request.send();
 
+	//add infowindow with train schedule
 	stationInfoWindow = new google.maps.InfoWindow();
 	google.maps.event.addListener(trainMarker, 'click', function() {
 		stationInfoWindow.setContent(stations[stationNumber].schedule);
