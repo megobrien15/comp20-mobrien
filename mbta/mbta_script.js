@@ -1,3 +1,18 @@
+/* Meghan O'Brien
+   COMP20
+   Assignment 2: MBTA
+   October 23, 2018
+
+   Includes: 
+   - places station markers on all stops on the MBTA Red Line
+   - connects MBTA Red Line stops
+   - places a star marker at the user's current location and centers the map on that location
+   - current location marker also gives closest station and its distance away
+   - each station marker gives the schedule of the next 10 trains to arrive
+     and depart the station
+*/
+
+
 var lat;
 var lng;
 var me;
@@ -24,6 +39,7 @@ var stations = [{name: "South Station", id: "place-sstat", lat:  42.352271, lng:
 				{name: "Fields Corner", id: "place-fldcr", lat: 42.300093, lng: -71.061667, schedule: ""},
 				{name: "Central Square", id: "place-cntsq", lat: 42.365486, lng: -71.103802, schedule: ""},
 				{name: "Braintree", id: "place-brntn", lat: 42.2078543, lng: -71.0011385, schedule: ""}];
+
 var ashmontLine = [{lat: stations[11].lat, lng: stations[11].lng},
 						{lat: stations[10].lat, lng: stations[10].lng},
 						{lat: stations[2].lat, lng: stations[2].lng},
@@ -48,6 +64,7 @@ var braintreeLine = [{lat: stations[4].lat, lng: stations[4].lng},
 						{lat: stations[16].lat, lng: stations[16].lng},
 						{lat: stations[21].lat, lng: stations[21].lng}]
 
+// originally centers on South Station, then gets location and loads map markers/lines
 function initMap() {
 
 	lat = stations[0].lat;
@@ -56,13 +73,15 @@ function initMap() {
 	me = new google.maps.LatLng(lat, lng);
 
 	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: lat, lng: lng}, zoom: 15
+		center: {lat: lat, lng: lng}, zoom: 17
 	});
 
 	getLocation();
 	renderMap();
 }
 
+// error checking in this function derived from the following source:
+// https://stackoverflow.com/questions/6092400/is-there-a-way-to-check-if-geolocation-has-been-declined-with-javascript
 function getLocation() {
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
@@ -70,10 +89,15 @@ function getLocation() {
 			lng = position.coords.longitude;
 			centerMap();
 			addLocMarker();
+		},
+		function (error) {
+			if (error.code == error.PERMISSION_DENIED) {
+				alert("You have denied location tracking. Some features may not be available.");
+			}
 		});
 	}
 	else {
-		alert("Geolocation not supported by your web browser");
+		alert("Geolocation not supported by your web browser. Sorry!");
 	}
 }
 
@@ -82,7 +106,8 @@ function centerMap() {
 	me = new google.maps.LatLng(lat, lng);
 	map.panTo(me);
 }
-
+// load marker for current location and add line to closest T stop
+// infowindow includes closest station and its distance away
 function addLocMarker() {
 
 	var closestStation = getClosestStation(lat, lng);
@@ -103,7 +128,7 @@ function addLocMarker() {
 				"; \n Distance away: " + closestStation.distance + " miles.");
 		infoWindow.open(map, myMarker);
 	});
-	
+
 	var closestPath = new google.maps.Polyline({
 		path: [{lat: lat, lng: lng}, {lat: stations[closestStation.station].lat, lng: stations[closestStation.station].lng}],
 		map: map,
@@ -141,8 +166,10 @@ function addMarkers() {
 	}
 
 }
+
 function addLines(closestStation) {
 
+	// this line extends from alewife to ashmont
 	var ashmontPolyline = new google.maps.Polyline({
 		path: ashmontLine,
 		map: map,
@@ -152,6 +179,7 @@ function addLines(closestStation) {
 		strokeWeight: 4
 	});
 
+	// this line only extends from jfk to braintree
 	var braintreePolyline = new google.maps.Polyline({
 		path: braintreeLine,
 		map: map,
@@ -174,7 +202,8 @@ function getClosestStation(myLat, myLng) {
 	}
 	closestObject = {station: closestStation, distance: closestDist};
 	return closestObject;
-} 
+}
+
 // this function adapted from https://stackoverflow.com/questions/14560999/using-the-haversine-formula-in-javascript
 function haversineDistance(myLatLng, stationLatLng, isMiles) {
 	function toRad(x) {
@@ -217,6 +246,8 @@ function getSchedule(stationNumber, trainMarker) {
 		if (this.readyState == 4 && this.status == 200) {
 			var parsed = JSON.parse(request.responseText);
 			var direction;
+
+			// for each of 10 upcoming trains in schedule
 			for (i = 0; i < parsed.data.length; i++) {
 				if (parsed.data[i].attributes.direction_id == 1) {
 					direction = "Alewife";
