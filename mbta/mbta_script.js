@@ -245,18 +245,40 @@ function getSchedule(stationNumber, trainMarker) {
 	request.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var parsed = JSON.parse(request.responseText);
-			var direction;
 
-			// for each of 10 upcoming trains in schedule
-			for (i = 0; i < parsed.data.length; i++) {
-				if (parsed.data[i].attributes.direction_id == 1) {
-					direction = "Alewife";
+			//if no data for a station (e.g. station is closed)
+			if (parsed.data.length == 0) {
+				stations[stationNumber].schedule = "<p> There are no trains available for this station </p>";
+			}
+			else {
+				// for each of 10 upcoming trains in schedule
+				for (i = 0; i < parsed.data.length; i++) {
+					
+					var direction;
+					var arrival;
+					var departure;
+
+					if (parsed.data[i].attributes.direction_id == 1) {
+						direction = "Alewife";
+					}
+					else {
+						direction = "Ashmont/Braintree";
+					}
+					if (parsed.data[i].attributes.arrival_time == null) {
+						arrival = "N/A";
+					}
+					else {
+						arrival = parsed.data[i].attributes.arrival_time;
+					}
+					if (parsed.data[i].attributes.departure_time == null) {
+						departure = "N/A";
+					}
+					else {
+						departure = parsed.data[i].attributes.departure_time;
+					} 
+					stations[stationNumber].schedule += "<p>" + direction + " train arriving at: " + arrival + 
+													" and departing at " + departure + ";" + "</p>";
 				}
-				else {
-					direction = "Ashmont/Braintree";
-				}
-				stations[stationNumber].schedule += "<p>" + direction + " train arriving at: " + parsed.data[i].attributes.arrival_time + 
-												" and departing at " + parsed.data[i].attributes.departure_time + ";" + "</p>";
 			}
 		}
 	}
