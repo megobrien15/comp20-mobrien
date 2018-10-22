@@ -161,6 +161,8 @@ function addMarkers() {
 			title: stations[i].name,
 			icon: trainMarkerImage
 		});
+
+		stations[i].schedule = "<h1>Schedule for " + stations[i].name + ":</h1>";
 		//for each station marker, get schedule and create infowindow
 		getSchedule(i, trainMarker);
 	}
@@ -253,7 +255,7 @@ function getSchedule(stationNumber, trainMarker) {
 			else {
 				// for each of 10 upcoming trains in schedule
 				for (i = 0; i < parsed.data.length; i++) {
-					
+
 					var direction;
 					var arrival;
 					var departure;
