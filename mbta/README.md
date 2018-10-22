@@ -10,4 +10,5 @@ on the haversine function from StackOverflow (link to post with function is incl
 I also received guidance for checking if a user has allowed location tracking from
 a StackOverflow post that is linked in the code.
 
-I spent approximately 6 hours completing this assignment
+I spent approximately 9 hours completing this assignment, though a lot of that time
+was spent having fun and trying to experiment with different types of formatting.
