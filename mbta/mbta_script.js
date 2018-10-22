@@ -258,7 +258,8 @@ function getSchedule(stationNumber, trainMarker) {
 
 					var direction;
 					var arrival;
-					var departure;
+					var time;
+					var parsedtime;
 
 					if (parsed.data[i].attributes.direction_id == 1) {
 						direction = "Alewife";
@@ -267,19 +268,21 @@ function getSchedule(stationNumber, trainMarker) {
 						direction = "Ashmont/Braintree";
 					}
 					if (parsed.data[i].attributes.arrival_time == null) {
-						arrival = "N/A";
+						arrival = parsed.data[i].attributes.departure_time;
+						time = arrival.split("T");
+						arrival = time[1];
+						parsedtime = arrival.split(":");
+						arrival = parsedtime[0] + ":" + parsedtime[1];
 					}
 					else {
 						arrival = parsed.data[i].attributes.arrival_time;
+						time = arrival.split("T");
+						arrival = time[1];
+						parsedtime = arrival.split(":");
+						arrival = parsedtime[0] + ":" + parsedtime[1];
 					}
-					if (parsed.data[i].attributes.departure_time == null) {
-						departure = "N/A";
-					}
-					else {
-						departure = parsed.data[i].attributes.departure_time;
-					} 
-					stations[stationNumber].schedule += "<p>" + direction + " train arriving at: " + arrival + 
-													" and departing at " + departure + ";" + "</p>";
+
+					stations[stationNumber].schedule += "<p>" + direction + " train arriving at: " + arrival + "</p>";
 				}
 			}
 		}
