@@ -16,18 +16,15 @@
 				$("#msg").val("");
 			}
 		});
-		function store() {
+		function store() {		
 			txt = $("#msg").val();
 			time = new Date();
 			time = time.toString();
 			txt = time + " - " + txt;
 			localStorage[localStorage.length] = txt;
-			reload();
-		}
-		function reload() {
-			output = "<p>";
-			for (var i = 0; i < localStorage.length; i++) {
-				output = output + localStorage.getItem(localStorage.key(i)) + "<br>";
+			output = "<p>";	
+			for (var i = localStorage.length - 1; i >= 0; i--) {
+				output = output + localStorage.getItem(i) + "<br>";
 			}
 			output = output + "</p>"
 			$("#log").html(output);

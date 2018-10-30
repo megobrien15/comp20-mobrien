@@ -2,8 +2,7 @@ Meghan O'Brien
 COMP20 Lab 7
 November 1, 2018
 
-So far, everything works except that the output logs end up in the wrong
-order after a certain number have been added.
+As far as I know, everything has been implemented correctly and functions as expected.
 
 I did not collaborate with anyone on this assignment, but I got some help
 from Stack Overflow -- citation in the code
