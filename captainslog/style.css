@@ -1,0 +1,21 @@
+body {
+	background-color: #EDD7E6;
+	padding: 10px;
+}
+#log {
+	background-color: #923A78;
+	color: white;
+	border: double;
+	padding: 10px;
+}
+h3 {
+	background-color: #BB76A6;
+	border: double;
+	padding: 10px;
+}
+h1 {
+	background-color: #480B36;
+	color: white;
+	border: double;
+	padding: 10px;
+}

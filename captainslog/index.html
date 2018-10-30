@@ -13,6 +13,7 @@
 		$(document).keypress(function(enter) {
 			if (enter.which == 13) {
 				store();
+				$("#msg").val("");
 			}
 		});
 		function store() {
@@ -30,7 +31,6 @@
 			}
 			output = output + "</p>"
 			$("#log").html(output);
-			console.log(output);
 		}
 	</script>
 </head>
