@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Captain's Log</title>
+	<link rel="stylesheet" href="style.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<script>
+		// adapted from https://stackoverflow.com/questions/979662/how-to-detect-pressing-enter-on-keyboard-using-jquery
+		$(document).keypress(function(enter) {
+			if (enter.which == 13) {
+				store();
+			}
+		});
+		function store() {
+			txt = $("#msg").val();
+			time = new Date();
+			time = time.toString();
+			txt = time + " - " + txt;
+			localStorage[localStorage.length] = txt;
+			reload();
+		}
+		function reload() {
+			output = "<p>";
+			for (var i = 0; i < localStorage.length; i++) {
+				output = output + localStorage.getItem(localStorage.key(i)) + "<br>";
+			}
+			output = output + "</p>"
+			$("#log").html(output);
+			console.log(output);
+		}
+	</script>
+</head>
+
+<body>
+	<h1>Captain's Log</h1>
+	<h3>New entry: <input type="text" id="msg" name="msg" size="30" /></h3>
+	<div id="log"></div>
+</body>
+</html>
